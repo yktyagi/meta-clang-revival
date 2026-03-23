@@ -5,7 +5,7 @@ deltask do_populate_sysroot
 deltask do_populate_lic
 RM_WORK_EXCLUDE += "${PN}"
 
-inherit nopackages allarch
+inherit nopackages allarch nospdx
 
 PN = "llvm-project-source-${PV}"
 WORKDIR = "${TMPDIR}/work-shared/llvm-project-source-${PV}-${PR}"
@@ -88,5 +88,4 @@ python add_distro_vendor() {
 }
 
 do_patch[postfuncs] += "add_distro_vendor"
-do_create_spdx[depends] += "${PN}:do_patch"
 
