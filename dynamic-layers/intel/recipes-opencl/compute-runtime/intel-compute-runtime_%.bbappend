@@ -4,3 +4,5 @@
 # into the same build.
 DEPENDS:remove = "libva"
 DEPENDS:append = " libva-initial"
+
+CXXFLAGS:remove = "-Wno-error=sfinae-incomplete"
