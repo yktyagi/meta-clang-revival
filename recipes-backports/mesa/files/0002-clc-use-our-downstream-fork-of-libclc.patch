@@ -1,0 +1,43 @@
+From 8bda7974958e5ba56b0eec25a7876c004b6b743b Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Thu, 16 Jul 2026 21:20:52 +0200
+Subject: [PATCH 2/2] clc: use our downstream fork of libclc
+
+There are a couple of issues with the upstream versions and release
+schedules and overall experience makes it dificult for us to rely on
+users using a proper functional implementation.
+
+And we want to ship a conformant OpenCL implementation here and that's
+difficult if users run untested libclc versions or libclc with known bugs
+that aren't going to get fixed upstream because the release is already
+EoL.
+
+Backport-to: *
+Upstream-Status: Submitted [https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/43020]
+---
+ meson.build | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 68bbb942b99..6e2590cc2c6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -950,7 +950,14 @@ with_poly = [
+ 
+ dep_clc = null_dep
+ if with_gallium_rusticl or with_microsoft_clc
+-  dep_clc = dependency('libclc')
++  dep_clc = dependency('mesa-libclc', required : false,
++    not_found_message :
++    'mesa-libclc not found. Build will fall back to upstream libclc, however ' +
++    'certain versions are known to contain bugs that make OpenCL builtins ' +
++    'return incorrect results.')
++  if not dep_clc.found()
++    dep_clc = dependency('libclc')
++  endif
+ endif
+ 
+ gl_pkgconfig_c_flags = []
+-- 
+2.55.0
+
